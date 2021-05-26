@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.lengyan</groupId>
+    <artifactId>java-dapr-adaptor</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+
+    <modules>
+        <module>discovery</module>
+        <module>core</module>
+        <module>service-invocation</module>
+    </modules>
+
+    <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+
+        <slf4j.version>1.7.5</slf4j.version>
+        <redis-clients.version>3.2.0</redis-clients.version>
+        <typesafe.config.version>1.4.0</typesafe.config.version>
+        <dapr.client.version>1.0.2</dapr.client.version>
+
+        <javaVersion>1.8</javaVersion>
+        <maven.version>3.3.9</maven.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${redis-clients.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe</groupId>
+                <artifactId>config</artifactId>
+                <version>${typesafe.config.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>29.0-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-all</artifactId>
+                <version>1.37.1</version>
+            </dependency>
+            <!-- Dapr's core SDK with all features, except Actors. -->
+            <dependency>
+                <groupId>io.dapr</groupId>
+                <artifactId>dapr-sdk</artifactId>
+                <version>${dapr.client.version}</version>
+            </dependency>
+            <!-- Dapr's SDK for Actors (optional). -->
+            <dependency>
+                <groupId>io.dapr</groupId>
+                <artifactId>dapr-sdk-actors</artifactId>
+                <version>${dapr.client.version}</version>
+            </dependency>
+            <!-- Dapr's SDK integration with SpringBoot (optional). -->
+            <dependency>
+                <groupId>io.dapr</groupId>
+                <artifactId>dapr-sdk-springboot</artifactId>
+                <version>${dapr.client.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>oss-release</id>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
+</project>

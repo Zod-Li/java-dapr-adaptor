@@ -6,7 +6,7 @@
     <parent>
         <artifactId>discovery</artifactId>
         <groupId>me.lengyan</groupId>
-        <version>${revision}</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>discovery-core</artifactId>
@@ -18,6 +18,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>me.lengyan</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>

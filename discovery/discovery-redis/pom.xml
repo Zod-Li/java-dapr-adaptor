@@ -7,7 +7,7 @@
     <parent>
         <artifactId>discovery</artifactId>
         <groupId>me.lengyan</groupId>
-        <version>${revision}</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>discovery-redis</artifactId>
@@ -22,13 +22,16 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>me.lengyan</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>me.lengyan</groupId>
             <artifactId>discovery-core</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>

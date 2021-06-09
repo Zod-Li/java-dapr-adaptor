@@ -8,5 +8,8 @@ An client adaptor layer for Dapr
 - [ ] 多注册中心支持(consul, eureka, redis, nacos, zk, etcd3..)
 - [ ] grpc多版本支持, 允许多版本共存 如: package proto.v1.UserService
 - [ ] 流量管理
+
+
+- [ ] 要不要做个starter?
 ## 食用指南
 

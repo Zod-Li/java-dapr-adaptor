@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.lengyan</groupId>
         <artifactId>java-dapr-adaptor</artifactId>
-        <version>${revision}</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>core</artifactId>
@@ -23,9 +23,36 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+<!--        &lt;!&ndash; Dapr's core SDK with all features, except Actors. &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.dapr</groupId>-->
+<!--            <artifactId>dapr-sdk</artifactId>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; Dapr's SDK for Actors (optional). &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.dapr</groupId>-->
+<!--            <artifactId>dapr-sdk-actors</artifactId>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; Dapr's SDK integration with SpringBoot (optional). &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>io.dapr</groupId>-->
+<!--            <artifactId>dapr-sdk-springboot</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
 </project>

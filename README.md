@@ -9,4 +9,5 @@ An client adaptor layer for Dapr
 - [x] grpc多版本支持, 允许多版本共存 如: package proto.v1.UserService
 - [ ] 流量管理
 - [x] 做个springboot-starter, 自动扫描注册
-
+- [ ] AppCallbackGrpc可扩展
+ 

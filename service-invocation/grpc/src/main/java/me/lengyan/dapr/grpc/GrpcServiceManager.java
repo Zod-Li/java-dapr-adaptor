@@ -12,7 +12,6 @@ import me.lengyan.dapr.core.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
 
 import java.util.List;
 import java.util.Map;
@@ -33,13 +32,10 @@ public class GrpcServiceManager {
 
     public static Descriptors.ServiceDescriptor findServiceDescriptor(String fullMethodName) throws Exception {
         checkArgument(StringUtils.isNotBlank(fullMethodName), "fullMethodName not valid");
-
         // reflect invoke by service
         CompletableFuture<Descriptors.ServiceDescriptor> future = serviceDescriptors.computeIfAbsent(
             extraPrefix(fullMethodName), (k) -> CompletableFuture.supplyAsync(() -> findDescriptor(fullMethodName)));
-
-        // do something?
-        return future.get(3000, TimeUnit.MILLISECONDS);
+        return future.get();
     }
 
     /**
@@ -67,37 +63,36 @@ public class GrpcServiceManager {
                 // 文件类型响应
                 if (resp.getMessageResponseCase() != ServerReflectionResponse.MessageResponseCase.FILE_DESCRIPTOR_RESPONSE) {
                     LOGGER.error("unexpect server reflection response type: {}", resp.getMessageResponseCase().name());
+                    latch.countDown();
                     return;
                 }
                 List<ByteString> fdpList = resp.getFileDescriptorResponse().getFileDescriptorProtoList();
                 try {
                     Descriptors.FileDescriptor fileDescriptor = getFileDescriptor(fdpList, packageName, serviceName);
                     Descriptors.ServiceDescriptor serviceDescriptor = fileDescriptor.findServiceByName(serviceName);
-                    // Null is returnable
+                    // null is returnable
                     holder[0] = serviceDescriptor;
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
+                } finally {
+                    latch.countDown();
                 }
             }
 
             @Override
             public void onError(Throwable t) {
                 LOGGER.error("dapr adaptor reflection invoke error");
-                latch.countDown();
             }
 
             @Override
             public void onCompleted() {
-                latch.countDown();
             }
         };
-
         StreamObserver<ServerReflectionRequest> reqObserver = ServerReflectionGrpc.newStub(reflectionChannel).serverReflectionInfo(respObserver);
         reqObserver.onNext(ServerReflectionRequest.newBuilder().setFileContainingSymbol(fullMethodName).build());
-        //reqObserver.onCompleted();
 
         try {
-            latch.await();
+            latch.await(3000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
         }
         return holder[0];

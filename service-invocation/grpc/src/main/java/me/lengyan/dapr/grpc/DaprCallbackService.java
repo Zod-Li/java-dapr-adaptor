@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.Optional;
 
+import static me.lengyan.dapr.grpc.utils.ReflectionUtils.doInvoke;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -51,7 +52,8 @@ public class DaprCallbackService extends AppCallbackGrpc.AppCallbackImplBase imp
 
             Descriptors.ServiceDescriptor serviceDescriptor = GrpcServiceManager.findServiceDescriptor(fullMethodName);
             if (serviceDescriptor == null) {
-                throw new DaprAdaptorException("");
+                LOGGER.error("service not found :{}", fullServiceName);
+                throw new DaprAdaptorException("service not found :" + fullServiceName);
             }
 
             Descriptors.MethodDescriptor methodDescriptor = serviceDescriptor.findMethodByName(methodName);
@@ -60,22 +62,16 @@ public class DaprCallbackService extends AppCallbackGrpc.AppCallbackImplBase imp
                 throw new DaprAdaptorException("can not found method " + methodName + "");
             }
 
-            ManagedChannel reflectionChannel = ManagedChannelBuilder
-                .forAddress(Properties.MAIN_CONTAINER_IP.get(), Properties.GRPC_SERVER_PORT.get())
-                .usePlaintext()
-                .build();
-            DynamicMessage resp = ReflectionUtils.doInvoke(reflectionChannel, serviceDescriptor.getFile(), methodDescriptor, request.getData());
+            DynamicMessage resp = doInvoke(Properties.MAIN_CONTAINER_IP.get(), Properties.GRPC_SERVER_PORT.get(), methodDescriptor, request.getData());
 
-            if (LOGGER.isDebugEnabled()) {
-                TypeRegistry registry = TypeRegistry.newBuilder()
-                    .add(serviceDescriptor.getFile().getMessageTypes())
-                    .build();
+            //if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isInfoEnabled()) {
+                TypeRegistry registry = TypeRegistry.newBuilder().add(serviceDescriptor.getFile().getMessageTypes()).build();
                 JsonFormat.Printer printer = JsonFormat.printer().usingTypeRegistry(registry)
                     .includingDefaultValueFields()
                     .preservingProtoFieldNames()
                     .omittingInsignificantWhitespace();
-
-                LOGGER.debug("response for method {}, {}: {}",
+                LOGGER.info("response for method {}:{}|{}",
                     fullMethodName, resp.getDescriptorForType().getFullName(), printer.print(resp));
             }
 

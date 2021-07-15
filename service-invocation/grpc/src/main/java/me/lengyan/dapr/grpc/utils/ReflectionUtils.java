@@ -3,12 +3,15 @@ package me.lengyan.dapr.grpc.utils;
 import com.google.protobuf.*;
 import io.grpc.CallOptions;
 import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoUtils;
 import io.grpc.stub.ClientCalls;
+import me.lengyan.dapr.core.Properties;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,24 +52,19 @@ public class ReflectionUtils {
         return Descriptors.FileDescriptor.buildFrom(fileDescriptorProto, dependencies);
     }
 
-    public static DynamicMessage doInvoke(ManagedChannel channel,
-                                          Descriptors.FileDescriptor fileDescriptor,
+    public static DynamicMessage doInvoke(String host, int port,
                                           Descriptors.MethodDescriptor originMethodDescriptor,
                                           Any message) throws Exception {
-
-        MethodDescriptor<DynamicMessage, DynamicMessage> methodDescriptor = generateMethodDescriptor(originMethodDescriptor);
-        //TypeRegistry registry = TypeRegistry.newBuilder()
-        //    .add(fileDescriptor.getMessageTypes())
-        //    .build();
-        //JsonFormat.Parser parser = JsonFormat.parser().usingTypeRegistry(registry);
-        //DynamicMessage.Builder messageBuilder = DynamicMessage.newBuilder(originMethodDescriptor.getInputType());
-        //parser.merge(requestContent, messageBuilder);
-        //DynamicMessage requestMessage = messageBuilder.build();
-
-        DynamicMessage requestMessage = methodDescriptor.parseRequest(new ByteArrayInputStream(message.getValue().toByteArray()));
-
-        // 调用，调用方式可以通过 originMethodDescriptor.isClientStreaming() 和 originMethodDescriptor.isServerStreaming() 推断
-        return ClientCalls.blockingUnaryCall(channel, methodDescriptor, CallOptions.DEFAULT, requestMessage);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+        try {
+            MethodDescriptor<DynamicMessage, DynamicMessage> methodDescriptor = generateMethodDescriptor(originMethodDescriptor);
+            InputStream request = new ByteArrayInputStream(message.getValue().toByteArray());
+            DynamicMessage requestMessage = methodDescriptor.parseRequest(request);
+            // 调用，调用方式可以通过 originMethodDescriptor.isClientStreaming() 和 originMethodDescriptor.isServerStreaming() 推断
+            return ClientCalls.blockingUnaryCall(channel, methodDescriptor, CallOptions.DEFAULT, requestMessage);
+        } finally {
+            channel.shutdown();
+        }
     }
 
     private static MethodDescriptor<DynamicMessage, DynamicMessage> generateMethodDescriptor(Descriptors.MethodDescriptor originMethodDescriptor) {

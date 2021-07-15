@@ -27,7 +27,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <redis-clients.version>3.2.0</redis-clients.version>
         <typesafe.config.version>1.4.0</typesafe.config.version>
-        <dapr.client.version>1.0.2</dapr.client.version>
+        <dapr.client.version>1.1.0</dapr.client.version>
 
         <javaVersion>1.8</javaVersion>
         <maven.version>3.3.9</maven.version>
@@ -137,15 +137,20 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+
+
+    </distributionManagement>
+
     <repositories>
-        <repository>
-            <id>oss-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>oss-release</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>oss-snapshots</id>-->
+<!--            <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>oss-release</id>-->
+<!--            <url>https://oss.sonatype.org/content/repositories/releases/</url>-->
+<!--        </repository>-->
     </repositories>
 
 </project>

@@ -68,7 +68,6 @@ public class StringGenerator {
 
 	public static void main(String[] args) {
 		for (int i = 0; i < 100; i++) {
-			//System.out.println(generate(12));
 			System.out.println(generateWithUppercase(8));
 			//System.out.println(generateWithSpecial(20));
 		}

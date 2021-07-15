@@ -1,6 +1,7 @@
 package me.lengyan.dapr.springboot.autoconfigure;
 
 import me.lengyan.dapr.grpc.DaprCallbackService;
+import me.lengyan.dapr.grpc.GrpcServiceManager;
 import me.lengyan.dapr.springboot.DaprGrpcAdaptorRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,6 +22,10 @@ public class DaprAdaptorAutoConfiguration {
         return new DaprGrpcAdaptorRunner();
     }
 
+    @Bean
+    public GrpcServiceManager grpcServiceManager() {
+        return new GrpcServiceManager();
+    }
 
     @Bean
     //@ConditionalOnBean(DaprGrpcAdaptorRunner.class)

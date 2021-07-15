@@ -29,15 +29,13 @@ public class DaprClientInterceptor implements ClientInterceptor {
                                                                CallOptions callOptions, Channel next) {
         ClientCall<ReqT, RespT> clientCall = next.newCall(methodDescriptor, callOptions);
         if (daprEnabled() && canProxied(methodDescriptor)) {
-            // TODO 转发后的grpc请求timeout值需<=原rpc请求阈值, 以满足原rpc请求abort前返回, OR自动处理?
-            //final Deadline deadline = min(callOptions.getDeadline(), Context.current().getDeadline());
+            // forward to dapr runtime
             String appId = select(listProviders(methodDescriptor.getServiceName()));
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("proxy grpc request to dapr-sidecar: {}|{}", appId, methodDescriptor.getFullMethodName());
+                LOGGER.debug("forward grpc call to dapr: {}|{}", appId, methodDescriptor.getFullMethodName());
             }
             return new DaprClientCall<>(appId, methodDescriptor, clientCall);
         }
-        // 对端未启用dapr-adaptor/对端服务未上线
         return clientCall;
     }
 
@@ -56,7 +54,7 @@ public class DaprClientInterceptor implements ClientInterceptor {
         return Collections.emptyList();
     }
 
-    // random select
+    // random select, no session
     private String select(List<String> appIds) {
         if (appIds == null || appIds.isEmpty()) {
             return null;
@@ -68,13 +66,4 @@ public class DaprClientInterceptor implements ClientInterceptor {
         return appIds.get(ThreadLocalRandom.current().nextInt(length));
     }
 
-    //private static Deadline min(@Nullable Deadline deadline0, @Nullable Deadline deadline1) {
-    //    if (deadline0 == null) {
-    //        return deadline1;
-    //    }
-    //    if (deadline1 == null) {
-    //        return deadline0;
-    //    }
-    //    return deadline0.minimum(deadline1);
-    //}
 }

@@ -36,16 +36,15 @@ public class DaprGrpcAdaptorRunner implements CommandLineRunner, DisposableBean 
 
                 ServerServiceDefinition definition = bindableService.bindService();
                 String serviceName = definition.getServiceDescriptor().getName();
+                Object schemeDesc = definition.getServiceDescriptor().getSchemaDescriptor();
 
+                // 忽略AppCallbackGrpc.SERVICE_NAME服务避免套娃
                 if (AppCallbackGrpc.SERVICE_NAME.equals(serviceName)) {
                     return;
                 }
 
                 LOGGER.info("dapr-adaptor found grpc service name: {}", serviceName);
-                // 忽略AppCallbackGrpc.SERVICE_NAME服务避免套娃
                 // TODO cache grpc Descriptors.FileDescriptor
-
-
                 // TODO 注册grpc服务, 应该等sidecar ready后再注册
                 try {
                     ServiceDescriptor descriptor = new GrpcProtocolDescriptor(serviceName);

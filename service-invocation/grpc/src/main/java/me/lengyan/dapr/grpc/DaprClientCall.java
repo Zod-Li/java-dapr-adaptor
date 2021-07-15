@@ -44,8 +44,7 @@ public class DaprClientCall<ReqT, RespT> extends ForwardingClientCall<ReqT, Resp
     @Override
     public void sendMessage(ReqT message) {
         //  目前只能实现unaryCall和异步, streaming方式的调用还不支持
-        // TODO traceId关联dapr?
-        // TODO 通信协议采用CloudEvent?
+        // TODO traceId关联dapr?  通信协议采用CloudEvent?
         try (DaprClient daprClient = new DaprClientBuilder().build()) {
 
             JsonFormat.Printer printer = null;
@@ -57,12 +56,11 @@ public class DaprClientCall<ReqT, RespT> extends ForwardingClientCall<ReqT, Resp
                     methodName, printer.print((Message)message), new Gson().toJson(headers));
             }
 
-            // TODO 默认使用bytes传输, 考虑bundle化Serializer以支持json/CloudEvent等
+            // 默认使用bytes传输, 后期考虑bundle化Serializer以支持json/CloudEvent等
             byte[] resp = daprClient.invokeMethod(appId, methodName,
                 ((Message)message).toByteString().toByteArray(), HttpExtension.NONE, headers, TypeRef.BYTE_ARRAY).block();
 
             if (resp != null) {
-                // 默认情况下(不改变序列化实现)使用json
                 RespT respT = methodDescriptor.getResponseMarshaller().parse(new ByteArrayInputStream(resp));
 
                 if (LOGGER.isDebugEnabled()) {
@@ -79,7 +77,7 @@ public class DaprClientCall<ReqT, RespT> extends ForwardingClientCall<ReqT, Resp
             }
         } catch (Exception e) {
             LOGGER.error("something went wrong", e);
-            // TODO 代理层出现问题时考虑是否支持降级
+            // TODO 代理层出现问题时考虑是否支持降级 尝试直连?
             getDelegateListener().onClose(Status.INTERNAL, null);
         }
     }

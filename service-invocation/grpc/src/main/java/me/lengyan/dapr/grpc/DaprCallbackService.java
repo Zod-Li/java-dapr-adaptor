@@ -10,13 +10,8 @@ import io.grpc.*;
 import io.grpc.stub.StreamObserver;
 import me.lengyan.dapr.core.Properties;
 //import net.devh.boot.grpc.server.service.GrpcService;
-import me.lengyan.dapr.grpc.utils.ReflectionUtils;
 import org.lognet.springboot.grpc.GRpcService;
 import org.slf4j.Logger;
-import reactor.core.publisher.Mono;
-
-import java.time.Duration;
-import java.util.Optional;
 
 import static me.lengyan.dapr.grpc.utils.ReflectionUtils.doInvoke;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -50,7 +45,7 @@ public class DaprCallbackService extends AppCallbackGrpc.AppCallbackImplBase imp
             //final String packageName = extraPrefix(fullServiceName);
             //final String serviceName = extraSuffix(fullServiceName);
 
-            Descriptors.ServiceDescriptor serviceDescriptor = GrpcServiceManager.findServiceDescriptor(fullMethodName);
+            Descriptors.ServiceDescriptor serviceDescriptor = ServiceManager.findServiceDescriptor(fullMethodName);
             if (serviceDescriptor == null) {
                 LOGGER.error("service not found :{}", fullServiceName);
                 throw new DaprAdaptorException("service not found :" + fullServiceName);

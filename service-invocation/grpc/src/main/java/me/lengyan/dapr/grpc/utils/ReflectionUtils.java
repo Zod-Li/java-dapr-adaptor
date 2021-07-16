@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -56,6 +57,7 @@ public class ReflectionUtils {
                                           Descriptors.MethodDescriptor originMethodDescriptor,
                                           Any message) throws Exception {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+        LOGGER.info("build reflection invoke channel: " + channel.toString());
         try {
             MethodDescriptor<DynamicMessage, DynamicMessage> methodDescriptor = generateMethodDescriptor(originMethodDescriptor);
             InputStream request = new ByteArrayInputStream(message.getValue().toByteArray());
